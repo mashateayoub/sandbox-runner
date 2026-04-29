@@ -1,0 +1,68 @@
+services:
+  sandbox-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - runtime-node
+      - runtime-python
+      - runtime-java
+      - runtime-go
+      - runtime-rust
+      - runtime-c-cpp
+      - runtime-bash
+
+  runtime-node:
+    image: runner-node:1
+    build:
+      context: ./docker/images/node
+      dockerfile: Dockerfile
+    command: ["sleep", "infinity"]
+
+  runtime-python:
+    image: runner-python:1
+    build:
+      context: ./docker/images/python
+      dockerfile: Dockerfile
+    command: ["sleep", "infinity"]
+
+  runtime-java:
+    image: runner-java:1
+    build:
+      context: ./docker/images/java
+      dockerfile: Dockerfile
+    command: ["sleep", "infinity"]
+
+  runtime-go:
+    image: runner-go:1
+    build:
+      context: ./docker/images/go
+      dockerfile: Dockerfile
+    command: ["sleep", "infinity"]
+
+  runtime-rust:
+    image: runner-rust:1
+    build:
+      context: ./docker/images/rust
+      dockerfile: Dockerfile
+    command: ["sleep", "infinity"]
+
+  runtime-c-cpp:
+    image: runner-c-cpp:1
+    build:
+      context: ./docker/images/c-cpp
+      dockerfile: Dockerfile
+    command: ["sleep", "infinity"]
+
+  runtime-bash:
+    image: runner-bash:1
+    build:
+      context: ./docker/images/bash
+      dockerfile: Dockerfile
+    command: ["sleep", "infinity"]
