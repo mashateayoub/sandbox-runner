@@ -39,14 +39,14 @@ export async function runInDocker(options: RunOptions): Promise<RunResult> {
         "mkdir -p /tmp/work",
         "cd /tmp/work",
         `printf '%s' \"$CODE_B64\" | base64 -d > "${command.filename}"`,
-        `printf '%s' \"$STDIN_B64\" | base64 -d | sh -lc '${command.command}'`,
+        `printf '%s' \"$STDIN_B64\" | base64 -d | sh -c '${command.command}'`,
       ].join("; ")
     : [
         "set -eu",
         "mkdir -p /tmp/work",
         "cd /tmp/work",
         `printf '%s' \"$CODE_B64\" | base64 -d > "${command.filename}"`,
-        `sh -lc '${command.command}'`,
+        `sh -c '${command.command}'`,
       ].join("; ");
 
   const dockerArgs = [
@@ -63,7 +63,7 @@ export async function runInDocker(options: RunOptions): Promise<RunResult> {
     ...(options.stdin !== undefined ? ["-e", `STDIN_B64=${stdinB64}`] : []),
     command.image,
     "sh",
-    "-lc",
+    "-c",
     runtimeScript,
   ];
 
