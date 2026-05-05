@@ -10,6 +10,15 @@ describe("contract schema", () => {
     expect(parsed.success).toBe(true);
   });
 
+  it("accepts async mode", () => {
+    const parsed = ExecuteRequestSchema.safeParse({
+      code: "console.log(1)",
+      language: "javascript",
+      mode: "async",
+    });
+    expect(parsed.success).toBe(true);
+  });
+
   it("rejects invalid language", () => {
     const parsed = ExecuteRequestSchema.safeParse({
       code: "x",

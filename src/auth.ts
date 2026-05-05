@@ -1,8 +1,22 @@
+import { timingSafeEqual } from "crypto";
 import { FastifyRequest } from "fastify";
 
+function safeEquals(a: string, b: string) {
+  const aBuf = Buffer.from(a);
+  const bBuf = Buffer.from(b);
+
+  if(aBuf.length !== bBuf.length) {
+    return false;
+  }
+
+  return timingSafeEqual(aBuf, bBuf);
+}
+
 export function assertBearerAuth(req: FastifyRequest) {
-  const expected = process.env.RUNNER_API_TOKEN;
-  if(!expected) {
+  const primary = process.env.RUNNER_API_TOKEN?.trim();
+  const previous = process.env.RUNNER_API_TOKEN_PREVIOUS?.trim();
+
+  if(!primary) {
     throw new Error("RUNNER_API_TOKEN is not configured");
   }
 
@@ -12,5 +26,17 @@ export function assertBearerAuth(req: FastifyRequest) {
   }
 
   const token = auth.slice("Bearer ".length).trim();
-  return token.length > 0 && token === expected;
+  if(token.length === 0) {
+    return false;
+  }
+
+  if(safeEquals(token, primary)) {
+    return true;
+  }
+
+  if(previous && safeEquals(token, previous)) {
+    return true;
+  }
+
+  return false;
 }

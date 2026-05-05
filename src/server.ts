@@ -9,12 +9,17 @@ app.get("/capabilities", async () => ({
   service: "sandbox-runner",
   provider: "remote",
   languages: Object.keys(COMMANDS),
+  modes: ["sync", "async"],
   limits: {
     timeoutMs: Number(process.env.RUNNER_MAX_TIMEOUT_MS || 10_000),
     memoryMb: Number(process.env.RUNNER_MAX_MEMORY_MB || 512),
     cpus: Number(process.env.RUNNER_MAX_CPUS || 1),
     pids: Number(process.env.RUNNER_MAX_PIDS || 128),
     maxOutputBytes: Number(process.env.RUNNER_MAX_OUTPUT_BYTES || 1_048_576),
+    maxConcurrentExecutions: Number(process.env.RUNNER_MAX_CONCURRENT_EXECUTIONS || 20),
+    rateLimitWindowMs: Number(process.env.RUNNER_RATE_LIMIT_WINDOW_MS || 60_000),
+    rateLimitMaxRequests: Number(process.env.RUNNER_RATE_LIMIT_MAX_REQUESTS || 120),
+    testCaseConcurrency: Number(process.env.RUNNER_TEST_CASE_CONCURRENCY || 4),
   },
 }));
 await registerExecuteRoute(app);
